@@ -901,9 +901,9 @@ class Field(object):
         #print("block_id", block, block_id)
 
         #To put it as it use to be
-        self.datatmp = np.array(self.data)
-        if not self.datatmp.flags.c_contiguous:
-            self.datatmp = self.data.copy()
+        #self.datatmp = np.array(self.data)
+        #if not self.datatmp.flags.c_contiguous:
+        #    self.datatmp = self.data.copy()
 
     @property
     def ctypes_struct(self):
@@ -916,7 +916,6 @@ class Field(object):
                         ('tdim', c_int), ('igrid', c_int),
                         ('allow_time_extrapolation', c_int),
                         ('time_periodic', c_int),
-                        ('data', POINTER(POINTER(c_float))),
                         ('chunk_info', POINTER(c_int)),
                         ('data_chunks', POINTER(POINTER(POINTER(c_float)))),
                         ('grid', POINTER(CGrid))]
@@ -934,7 +933,6 @@ class Field(object):
 
         cstruct = CField(self.grid.xdim, self.grid.ydim, self.grid.zdim,
                          self.grid.tdim, self.igrid, allow_time_extrapolation, time_periodic,
-                         self.datatmp.ctypes.data_as(POINTER(POINTER(c_float))),
                          (c_int * len(self.chunk_info))(*self.chunk_info),
                          (POINTER(POINTER(c_float)) * len(self.c_data_chunks))(*self.c_data_chunks),
                          pointer(self.grid.ctypes_struct))
